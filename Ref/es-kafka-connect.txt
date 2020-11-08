@@ -1,0 +1,48 @@
+https://sematext.com/blog/kafka-connect-elasticsearch-how-to/
+
+
+git clone -b 0.10.0.0 https://github.com/confluentinc/kafka-connect-elasticsearch.git
+
+cd kafka-connect-elasticsearch
+mvn clean package
+
+
+//Properties files : elasticsearch-connect.properties 
+
+name=elasticsearch-sink
+connector.class=io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+tasks.max=1
+topics=logs
+topic.index.map=logs:logs_index
+connection.url=http://localhost:9200
+type.name=log
+key.ignore=true
+schema.ignore=true
+
+
+
+
+
+// connect-standalone.properties :
+
+bootstrap.servers=localhost:9092
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
+internal.key.converter=org.apache.kafka.connect.json.JsonConverter
+internal.value.converter=org.apache.kafka.connect.json.JsonConverter
+internal.key.converter.schemas.enable=false
+internal.value.converter.schemas.enable=false
+offset.storage.file.filename=/tmp/connect.offsets
+offset.flush.interval.ms=10000
+
+
+
+bin/connect-standalone.sh config/connect-standalone.properties config/elasticsearch-connect.properties
+
+
+
+
+
+
